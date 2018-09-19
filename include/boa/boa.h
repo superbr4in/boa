@@ -1,29 +1,23 @@
 #pragma once
 
-#include <sstream>
 #include <string>
 
 #include <Python.h>
 
-inline std::wstring py_call_method(std::string const& file_path, std::string const& method_name, std::string const& argument)
+namespace boa
 {
-    constexpr auto module_name = "module";
+    class python_file
+    {
+        static int init_count_;
 
-    std::stringstream ss_import;
-    ss_import << "import imp" << std::endl;
-    ss_import << "imp.load_source('" << module_name << "', '" << file_path << "')" << std::endl;
+        PyObject* module_;
 
-    Py_Initialize();
+    public:
 
-    PyRun_SimpleString(ss_import.str().c_str());
+        explicit python_file(std::string const& location);
+        ~python_file();
 
-    auto* const py_module = PyImport_ImportModule(module_name);
-    auto* const py_result = PyObject_CallMethod(py_module, method_name.c_str(), "(s)", argument.c_str());
-
-    std::wstring const result = PyUnicode_AsWideCharString(py_result, nullptr);
-
-    Py_Finalize();
-
-    return result;
+        template <typename TResult, typename... TArgs>
+        TResult call_method(std::string const& name, TArgs&&... arguments) const;
+    };
 }
-
