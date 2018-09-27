@@ -15,6 +15,24 @@ cmake ..
 
 ## Manual
 
-| Type           | Result       | Parameter          |
-| -------------- |:------------:|:------------------:|
-| `std::wstring` | ❌ | :heavy_check_mark: |
+The core functionality lies in the `call_method` function of the `boa::python_file` class.
+
+The following table shows which types are currently supported for method results and arguments.
+
+| Type | Result | Argument |
+| --- |:---:|:---:|
+| `std::string` | ❌ | ❌ |
+| `std::wstring` | ✔️ | ❌ |
+| `char*` | ❌ | ✔️ |
+| `char const*` | ❌ | ✔️ |
+| `wchar_t*` | ❌ | ❌ |
+| `wchar_t const*` | ❌ | ❌ |
+| `int8_t` | ❌ | ✔️ |
+| `int16_t` | ❌ | ✔️ |
+| `int32_t` | ❌ | ✔️ |
+| `int64_t` | ❌ | ✔️ |
+| `float` | ❌ | ✔️ |
+| `double` | ❌ | ✔️ |
+| `PyObject*` | ❌ | ❔ |
+| `Py_ssize_t` | ❌ | ❔ |
+| `PY_LONG_LONG` | ❌ | ❔ |
