@@ -19,20 +19,20 @@ The core functionality lies in the `call_method` function of the `boa::python_fi
 
 The following table shows which types are currently supported for method results and arguments.
 
-| Type | Result | Argument |
-| --- |:---:|:---:|
-| `std::string` | ❌ | ❌ |
-| `std::wstring` | ✔️ | ❌ |
-| `char*` | ❌ | ✔️ |
-| `char const*` | ❌ | ✔️ |
-| `wchar_t*` | ❌ | ❌ |
-| `wchar_t const*` | ❌ | ❌ |
-| `int8_t` | ❌ | ✔️ |
-| `int16_t` | ❌ | ✔️ |
-| `int32_t` | ❌ | ✔️ |
-| `int64_t` | ❌ | ✔️ |
-| `float` | ❌ | ✔️ |
-| `double` | ❌ | ✔️ |
-| `PyObject*` | ✔️ | ✔️ |
-| `Py_ssize_t` | ❌ | ❔ |
-| `PY_LONG_LONG` | ❌ | ❔ |
+| Type             | Result             | Argument           |
+| ---------------- |:------------------:|:------------------:|
+| `std::string`    | :x:                | :x:                |
+| `std::wstring`   | :heavy_check_mark: | :x:                |
+| `char*`          | :x:                | :heavy_check_mark: |
+| `char const*`    | :x:                | :heavy_check_mark: |
+| `wchar_t*`       | :x:                | :x:                |
+| `wchar_t const*` | :x:                | :x:                |
+| `int8_t`         | :x:                | :heavy_check_mark: |
+| `int16_t`        | :x:                | :heavy_check_mark: |
+| `int32_t`        | :x:                | :heavy_check_mark: |
+| `int64_t`        | :x:                | :heavy_check_mark: |
+| `float`          | :x:                | :heavy_check_mark: |
+| `double`         | :x:                | :heavy_check_mark: |
+| `PyObject*`      | :heavy_check_mark: | :heavy_check_mark: |
+| `Py_ssize_t`     | :x:                | :grey_question:    |
+| `PY_LONG_LONG`   | :x:                | :grey_question:    |
