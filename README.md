@@ -33,6 +33,6 @@ The following table shows which types are currently supported for method results
 | `int64_t` | ❌ | ✔️ |
 | `float` | ❌ | ✔️ |
 | `double` | ❌ | ✔️ |
-| `PyObject*` | ❌ | ❔ |
+| `PyObject*` | ✔️ | ✔️ |
 | `Py_ssize_t` | ❌ | ❔ |
 | `PY_LONG_LONG` | ❌ | ❔ |
