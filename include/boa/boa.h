@@ -35,9 +35,23 @@ namespace boa
     };
 }
 
+template <typename TResult, typename... TArgs>
+TResult boa::python_file::call_method(std::string const& name, TArgs&&... arguments) const
+{
+    auto* result = PyObject_CallMethod(module_, name.c_str(), get_format<TArgs...>().c_str(), arguments...);
+
+    if (result == nullptr)
+        throw std::runtime_error("Failed to call the specified python method.");
+
+    return convert<TResult>(result);
+}
+
 template <typename T>
 constexpr T boa::python_file::convert(PyObject* const py_object)
 {
+    if constexpr (std::is_same_v<T, PyObject*>)
+        return py_object;
+
     if constexpr (std::is_same_v<T, std::wstring>)
     {
         auto* const raw_result = PyUnicode_AsWideCharString(py_object, nullptr);
@@ -48,7 +62,7 @@ constexpr T boa::python_file::convert(PyObject* const py_object)
         return result;
     }
 
-    throw std::runtime_error("Type not supported.");
+    throw std::runtime_error("Type not convertible from python object.");
 }
 
 template <typename... Ts>
@@ -99,7 +113,7 @@ constexpr void boa::python_file::get_inner_format(std::stringstream& ss_format)
     }
 
     if (format_char == '\0')
-        throw std::runtime_error("Type not supported.");
+        throw std::runtime_error("No format character available for this type.");
 
     ss_format << format_char;
 
@@ -108,15 +122,4 @@ constexpr void boa::python_file::get_inner_format(std::stringstream& ss_format)
         ss_format << ", ";
         get_inner_format<Ts...>(ss_format);
     }
-}
-
-template <typename TResult, typename... TArgs>
-TResult boa::python_file::call_method(std::string const& name, TArgs&&... arguments) const
-{
-    return convert<TResult>(
-        PyObject_CallMethod(
-            module_,
-            name.c_str(),
-            get_format<TArgs...>().c_str(),
-            arguments...));
 }
