@@ -15,12 +15,13 @@ cmake ..
 
 ## Manual
 
-The core functionality lies in the `call_method` function of the `boa::python_file` class.
+The core functionality lies in the `call_function` method of the `boa::python_file` class.
 
 The following table shows which types are currently supported for method results and arguments.
 
 | Type             | Result             | Argument           |
 | ---------------- |:------------------:|:------------------:|
+| `void`           | :heavy_check_mark: | :heavy_check_mark: |
 | `std::string`    | :x:                | :x:                |
 | `std::wstring`   | :heavy_check_mark: | :x:                |
 | `char*`          | :x:                | :heavy_check_mark: |
