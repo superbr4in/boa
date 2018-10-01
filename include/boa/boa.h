@@ -20,23 +20,23 @@ namespace boa
         ~python_file();
 
         template <typename TResult, typename... TArgs>
-        TResult call_method(std::string const& name, TArgs&&... arguments) const;
+        TResult call_function(std::string const& name, TArgs&&... arguments) const;
 
     private:
-
-        template <typename T>
-        static constexpr T convert(PyObject* py_object);
 
         template <typename... Ts>
         static constexpr std::string get_format();
 
         template <typename T, typename... Ts>
         static constexpr void get_inner_format(std::stringstream& ss_format);
+
+        template <typename T>
+        static constexpr T convert(PyObject* py_object);
     };
 }
 
 template <typename TResult, typename... TArgs>
-TResult boa::python_file::call_method(std::string const& name, TArgs&&... arguments) const
+TResult boa::python_file::call_function(std::string const& name, TArgs&&... arguments) const
 {
     auto* result = PyObject_CallMethod(module_, name.c_str(), get_format<TArgs...>().c_str(), arguments...);
 
@@ -44,25 +44,6 @@ TResult boa::python_file::call_method(std::string const& name, TArgs&&... argume
         throw std::runtime_error("Failed to call the specified python method.");
 
     return convert<TResult>(result);
-}
-
-template <typename T>
-constexpr T boa::python_file::convert(PyObject* const py_object)
-{
-    if constexpr (std::is_same_v<T, PyObject*>)
-        return py_object;
-
-    if constexpr (std::is_same_v<T, std::wstring>)
-    {
-        auto* const raw_result = PyUnicode_AsWideCharString(py_object, nullptr);
-
-        std::wstring const result(raw_result);
-
-        PyMem_Free(raw_result);
-        return result;
-    }
-
-    throw std::runtime_error("Type not convertible from python object.");
 }
 
 template <typename... Ts>
@@ -122,4 +103,23 @@ constexpr void boa::python_file::get_inner_format(std::stringstream& ss_format)
         ss_format << ", ";
         get_inner_format<Ts...>(ss_format);
     }
+}
+
+template <typename T>
+constexpr T boa::python_file::convert(PyObject* const py_object)
+{
+    if constexpr (std::is_same_v<T, PyObject*>)
+        return py_object;
+
+    if constexpr (std::is_same_v<T, std::wstring>)
+    {
+        auto* const raw_result = PyUnicode_AsWideCharString(py_object, nullptr);
+
+        std::wstring const result(raw_result);
+
+        PyMem_Free(raw_result);
+        return result;
+    }
+
+    throw std::runtime_error("Type not convertible from python object.");
 }
