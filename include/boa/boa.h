@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <sstream>
 #include <string>
 #include <type_traits>
@@ -38,10 +39,18 @@ namespace boa
 template <typename TResult, typename... TArgs>
 TResult boa::python_file::call_function(std::string const& name, TArgs&&... arguments) const
 {
-    auto* result = PyObject_CallMethod(module_, name.c_str(), get_format<TArgs...>().c_str(), arguments...);
+    std::optional<std::string> format;
+
+    if constexpr (sizeof...(TArgs) > 0)
+        format = get_format<TArgs...>();
+
+    auto* result = PyObject_CallMethod(module_, name.c_str(), format ? format->c_str() : nullptr, arguments...);
 
     if (result == nullptr)
         throw std::runtime_error("Failed to call the specified python method.");
+
+    if constexpr (std::is_same_v<TResult, void>)
+        return;
 
     return convert<TResult>(result);
 }
