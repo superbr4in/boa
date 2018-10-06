@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mutex>
 #include <optional>
 #include <sstream>
 #include <string>
@@ -36,6 +37,8 @@ namespace boa
     };
 }
 
+std::mutex call_mutex, convert_mutex;
+
 template <typename TResult, typename... TArgs>
 TResult boa::python_file::call_function(std::string const& name, TArgs&&... arguments) const
 {
@@ -44,15 +47,30 @@ TResult boa::python_file::call_function(std::string const& name, TArgs&&... argu
     if constexpr (sizeof...(TArgs) > 0)
         format = get_format<TArgs...>();
 
-    auto* result = PyObject_CallMethod(module_, name.c_str(), format ? format->c_str() : nullptr, arguments...);
+    call_mutex.lock();
 
-    if (result == nullptr)
+    auto* py_result =
+        PyObject_CallMethod(
+            module_,
+            name.c_str(),
+            format ? format->c_str() : nullptr,
+            arguments...);
+
+    call_mutex.unlock();
+
+    if (py_result == nullptr)
         throw std::runtime_error("Failed to call the specified python method.");
 
-    if constexpr (std::is_same_v<TResult, void>)
-        return;
+    if constexpr (!std::is_same_v<TResult, void>)
+    {
+        convert_mutex.lock();
 
-    return convert<TResult>(result);
+        auto const converted_result = convert<TResult>(py_result);
+
+        convert_mutex.unlock();
+
+        return converted_result;
+    }
 }
 
 template <typename... Ts>
