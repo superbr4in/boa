@@ -26,13 +26,13 @@ namespace boa
     private:
 
         template <typename... Ts>
-        static constexpr std::string get_format();
+        static std::string get_format();
 
         template <typename T, typename... Ts>
-        static constexpr void get_inner_format(std::stringstream& ss_format);
+        static void get_inner_format(std::stringstream& ss_format);
 
         template <typename T>
-        static constexpr T convert(PyObject* py_object);
+        static T convert(PyObject* py_object);
     };
 }
 
@@ -56,7 +56,7 @@ TResult boa::python_file::call_function(std::string const& name, TArgs&&... argu
 }
 
 template <typename... Ts>
-constexpr std::string boa::python_file::get_format()
+std::string boa::python_file::get_format()
 {
     std::stringstream ss_format;
 
@@ -70,7 +70,7 @@ constexpr std::string boa::python_file::get_format()
 }
 
 template <typename T, typename... Ts>
-constexpr void boa::python_file::get_inner_format(std::stringstream& ss_format)
+void boa::python_file::get_inner_format(std::stringstream& ss_format)
 {
     char format_char;
 
@@ -115,7 +115,7 @@ constexpr void boa::python_file::get_inner_format(std::stringstream& ss_format)
 }
 
 template <typename T>
-constexpr T boa::python_file::convert(PyObject* const py_object)
+T boa::python_file::convert(PyObject* const py_object)
 {
     if constexpr (std::is_same_v<T, PyObject*>)
         return py_object;
