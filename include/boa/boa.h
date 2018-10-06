@@ -138,6 +138,9 @@ T boa::python_file::convert(PyObject* const py_object)
     if constexpr (std::is_same_v<T, PyObject*>)
         return py_object;
 
+    if constexpr (std::is_same_v<T, std::string>)
+        return std::string(PyBytes_AsString(py_object));
+
     if constexpr (std::is_same_v<T, std::wstring>)
     {
         auto* const raw_result = PyUnicode_AsWideCharString(py_object, nullptr);

@@ -22,7 +22,7 @@ The following table shows which types are currently supported for method results
 | Type             | Result             | Argument           |
 | ---------------- |:------------------:|:------------------:|
 | `void`           | :heavy_check_mark: | :heavy_check_mark: |
-| `std::string`    | :x:                | :x:                |
+| `std::string`    | :heavy_check_mark: | :x:                |
 | `std::wstring`   | :heavy_check_mark: | :x:                |
 | `char*`          | :x:                | :heavy_check_mark: |
 | `char const*`    | :x:                | :heavy_check_mark: |
