@@ -94,6 +94,8 @@ void boa::python_file::get_inner_format(std::stringstream& ss_format)
 
     if      constexpr (std::is_same_v<T, char*> || std::is_same_v<T, char const*>)
         format_char = 's';
+    else if constexpr (std::is_same_v<T, wchar_t*> || std::is_same_v<T, wchar_t const*>)
+        format_char = 'u';
     else if constexpr (std::is_same_v<T, float>)
         format_char = 'f';
     else if constexpr (std::is_same_v<T, double>)
@@ -150,6 +152,9 @@ T boa::python_file::convert(PyObject* const py_object)
         PyMem_Free(raw_result);
         return result;
     }
+
+    if constexpr (std::is_integral_v<T>)
+        return static_cast<T>(PyLong_AsLong(py_object));
 
     throw std::runtime_error("Type not convertible from python object.");
 }

@@ -10,6 +10,7 @@ using namespace boa;
 constexpr auto FUNC_GET_TYPES      = "get_types";
 constexpr auto FUNC_PROCEDURE      = "procedure";
 constexpr auto FUNC_PROCEDURE_ARGS = "procedure_args";
+constexpr auto FUNC_REFLECT        = "reflect";
 constexpr auto FUNC_RESULT_BYTES   = "result_bytes";
 
 python_file get_test_file()
@@ -39,7 +40,23 @@ TEST_CASE("call_function<std::string>")
 
 TEST_CASE("call_function<std::wstring>")
 {
-    CHECK(get_test_file().call_function<std::wstring>(FUNC_GET_TYPES) == L"");
+    std::wstring const ws = L"test";
+    CHECK(get_test_file().call_function<std::wstring, wchar_t const*>(FUNC_REFLECT, ws.c_str()) == ws);
+}
+
+TEST_CASE("call_function<Integral>")
+{
+    auto const t_file = get_test_file();
+    std::string const f = FUNC_REFLECT;
+
+    CHECK(t_file.call_function< int8_t,   int8_t> (f,  INT8_MAX)  ==  INT8_MAX);
+    CHECK(t_file.call_function< int16_t,  int16_t>(f,  INT16_MAX) ==  INT16_MAX);
+    CHECK(t_file.call_function< int32_t,  int32_t>(f,  INT32_MAX) ==  INT32_MAX);
+    CHECK(t_file.call_function< int64_t,  int64_t>(f,  INT64_MAX) ==  INT64_MAX);
+    CHECK(t_file.call_function<uint8_t,  uint8_t> (f, UINT8_MAX)  == UINT8_MAX);
+    CHECK(t_file.call_function<uint16_t, uint16_t>(f, UINT16_MAX) == UINT16_MAX);
+    CHECK(t_file.call_function<uint32_t, uint32_t>(f, UINT32_MAX) == UINT32_MAX);
+    CHECK(t_file.call_function<uint64_t, uint64_t>(f, UINT64_MAX) == UINT64_MAX);
 }
 
 TEST_CASE("call_function<std::wstring, PyObject*>")

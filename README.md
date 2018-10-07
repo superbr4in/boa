@@ -26,12 +26,12 @@ The following table shows which types are currently supported for method results
 | `std::wstring`   | :heavy_check_mark: | :x:                |
 | `char*`          | :x:                | :heavy_check_mark: |
 | `char const*`    | :x:                | :heavy_check_mark: |
-| `wchar_t*`       | :x:                | :x:                |
-| `wchar_t const*` | :x:                | :x:                |
-| `int8_t`         | :x:                | :heavy_check_mark: |
-| `int16_t`        | :x:                | :heavy_check_mark: |
-| `int32_t`        | :x:                | :heavy_check_mark: |
-| `int64_t`        | :x:                | :heavy_check_mark: |
+| `wchar_t*`       | :x:                | :heavy_check_mark: |
+| `wchar_t const*` | :x:                | :heavy_check_mark: |
+| `int8_t`         | :heavy_check_mark: | :heavy_check_mark: |
+| `int16_t`        | :heavy_check_mark: | :heavy_check_mark: |
+| `int32_t`        | :heavy_check_mark: | :heavy_check_mark: |
+| `int64_t`        | :heavy_check_mark: | :heavy_check_mark: |
 | `float`          | :x:                | :heavy_check_mark: |
 | `double`         | :x:                | :heavy_check_mark: |
 | `PyObject*`      | :heavy_check_mark: | :heavy_check_mark: |
