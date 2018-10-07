@@ -37,8 +37,6 @@ namespace boa
     };
 }
 
-std::mutex call_mutex, convert_mutex;
-
 template <typename TResult, typename... TArgs>
 TResult boa::python_file::call_function(std::string const& name, TArgs&&... arguments) const
 {
@@ -47,8 +45,6 @@ TResult boa::python_file::call_function(std::string const& name, TArgs&&... argu
     if constexpr (sizeof...(TArgs) > 0)
         format = get_format<TArgs...>();
 
-    call_mutex.lock();
-
     auto* py_result =
         PyObject_CallMethod(
             module_,
@@ -56,21 +52,13 @@ TResult boa::python_file::call_function(std::string const& name, TArgs&&... argu
             format ? format->c_str() : nullptr,
             arguments...);
 
-    call_mutex.unlock();
-
     if (py_result == nullptr)
         throw std::runtime_error("Failed to call the specified python method.");
 
-    if constexpr (!std::is_same_v<TResult, void>)
-    {
-        convert_mutex.lock();
+    if constexpr (std::is_same_v<TResult, void>)
+        return;
 
-        auto const converted_result = convert<TResult>(py_result);
-
-        convert_mutex.unlock();
-
-        return converted_result;
-    }
+    return convert<TResult>(py_result);
 }
 
 template <typename... Ts>
