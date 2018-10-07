@@ -53,7 +53,12 @@ TResult boa::python_file::call_function(std::string const& name, TArgs&&... argu
             arguments...);
 
     if (py_result == nullptr)
-        throw std::runtime_error("Failed to call the specified python method.");
+    {
+        std::stringstream ss_err;
+        ss_err << "Function call failure: \"" << name << "\"";
+
+        throw std::runtime_error(ss_err.str());
+    }
 
     if constexpr (std::is_same_v<TResult, void>)
         return;
@@ -111,7 +116,12 @@ void boa::python_file::get_inner_format(std::stringstream& ss_format)
     }
 
     if (format_char == '\0')
-        throw std::runtime_error("No format character available for this type.");
+    {
+        std::stringstream ss_err;
+        ss_err << "Unexpected parameter type: \"" << typeid(T).name() << "\"";
+
+        throw std::runtime_error(ss_err.str());
+    }
 
     ss_format << format_char;
 
@@ -144,5 +154,8 @@ T boa::python_file::convert(PyObject* const py_object)
     if constexpr (std::is_integral_v<T>)
         return static_cast<T>(PyLong_AsLong(py_object));
 
-    throw std::runtime_error("Type not convertible from python object.");
+    std::stringstream ss_err;
+    ss_err << "Unexpected return type: \"" << typeid(T).name() << "\"";
+
+    throw std::runtime_error(ss_err.str());
 }
